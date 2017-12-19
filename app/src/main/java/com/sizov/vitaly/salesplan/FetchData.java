@@ -1,6 +1,7 @@
 package com.sizov.vitaly.salesplan;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,8 +17,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class FetchData extends AsyncTask<Void, Void, Void> {
+
+    private final static String TAG = "FetchData";
 
     private String data = "";
     private String dataParsed = "";
@@ -40,28 +44,25 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
                 data = data + line;
             }
 
+            mObjects = new ArrayList<>();
             JSONArray jsonArray = new JSONArray(data);
             for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = (JSONObject) jsonArray.get(i);
 
-                mObjects = new ArrayList<>();
+                JSONObject jsonObject = (JSONObject) jsonArray.get(i);
                 Object object = new Object();
                 object.setId(jsonObject.getInt("id"));
                 object.setName((String) jsonObject.get("Name"));
                 object.setAddress((String) jsonObject.get("Address"));
                 object.setSalesPlan(jsonObject.getInt("Sales Plan"));
 
-
                 JSONArray salesArr = (JSONArray) jsonObject.get("Current Sales");
+                double[] arr = new double[salesArr.length()];
+
                 for(int j = 0; j < salesArr.length(); j++) {
-
                     double element = salesArr.getDouble(j);
-                    double[] arr = new double[salesArr.length()];
-                    arr[j] = element + 0;
-
+                    arr[j] =+ element;
                     object.setCurrentSales(arr);
                 }
-
 
                 mObjects.add(object);
 
@@ -90,5 +91,13 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
 
         ObjectsFragment.mFetchText.setText(this.dataParsed);
 
+        for (int i = 0; mObjects.size() > i; i++ ) {
+            Log.i(TAG, "Id = " + mObjects.get(i).getId());
+            Log.i(TAG, "Name = " + mObjects.get(i).getName());
+            Log.i(TAG, "Address = " + mObjects.get(i).getAddress());
+            Log.i(TAG, "CurrentSales = " + Arrays.toString(mObjects.get(i).getCurrentSales()));
+            Log.i(TAG, "SalesPlan = " + mObjects.get(i).getSalesPlan());
+            Log.i(TAG, "...............................................");
+        }
     }
 }
