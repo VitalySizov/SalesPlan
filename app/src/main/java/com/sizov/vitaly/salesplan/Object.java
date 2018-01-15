@@ -8,6 +8,7 @@ public class Object {
     private String mAddress;
     private int mSalesPlan;
     private double[] mCurrentSales;
+    private double mTotalCurrentSales;
 
 
     public int getId() {
@@ -48,5 +49,13 @@ public class Object {
 
     public void setCurrentSales(double[] currentSales) {
         mCurrentSales = currentSales;
+    }
+
+    public double getTotalCurrentSales() {
+        return mTotalCurrentSales;
+    }
+
+    public void setTotalCurrentSales(double totalCurrentSales) {
+        mTotalCurrentSales = totalCurrentSales;
     }
 }

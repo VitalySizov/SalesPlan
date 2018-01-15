@@ -1,0 +1,69 @@
+package com.sizov.vitaly.salesplan;
+
+
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.List;
+import java.util.Locale;
+
+public class ObjectAdapter extends RecyclerView.Adapter<ObjectAdapter.ViewHolder> {
+
+    private List<Object> mObjectList;
+    private Context mContext;
+
+
+    public ObjectAdapter(List<Object> objects, Context context) {
+
+        this.mObjectList = objects;
+        this.mContext = context;
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.row_objects, parent, false);
+        return new ViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder(ObjectAdapter.ViewHolder holder, int position) {
+
+        final Object object = mObjectList.get(position);
+        holder.mName.setText(object.getName());
+        holder.mAddress.setText(object.getAddress());
+        holder.mTotalCurrentSales.setText("Total current sales: " + String.format(Locale.getDefault(),
+                "%(.2f", object.getTotalCurrentSales()) + "$");
+        holder.mSalesPlan.setText("Sales plan: " + String.format(Locale.getDefault(),"%d",
+                object.getSalesPlan()) + "$");
+    }
+
+    @Override
+    public int getItemCount() {
+        if (mObjectList != null) {
+            return mObjectList.size();
+        }
+        return 0;
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView mName;
+        public TextView mAddress;
+        public TextView mTotalCurrentSales;
+        public TextView mSalesPlan;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+
+            mName = (TextView) itemView.findViewById(R.id.name_text_view);
+            mAddress = (TextView) itemView.findViewById(R.id.address_text_view);
+            mTotalCurrentSales = (TextView) itemView.findViewById(R.id.total_current_sales_text_view);
+            mSalesPlan = (TextView) itemView.findViewById(R.id.sales_plan_text_view);
+        }
+    }
+}
