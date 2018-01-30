@@ -2,7 +2,9 @@ package com.sizov.vitaly.salesplan;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,7 @@ public class ObjectAdapter extends RecyclerView.Adapter<ObjectAdapter.ViewHolder
     private List<Object> mObjectList;
     private Context mContext;
 
+    private static final String TAG = "ObjectAdapter";
 
     public ObjectAdapter(List<Object> objects, Context context) {
 
@@ -31,7 +34,7 @@ public class ObjectAdapter extends RecyclerView.Adapter<ObjectAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(ObjectAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final ObjectAdapter.ViewHolder holder, final int position) {
 
         final Object object = mObjectList.get(position);
         holder.mName.setText(object.getName());
@@ -40,6 +43,24 @@ public class ObjectAdapter extends RecyclerView.Adapter<ObjectAdapter.ViewHolder
                 "%(.2f", object.getTotalCurrentSales()) + "$");
         holder.mSalesPlan.setText("Sales plan: " + String.format(Locale.getDefault(),"%d",
                 object.getSalesPlan()) + "$");
+
+        // Transition to ObjectDetailsActivity
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setObjectInView(object);
+            }
+        });
+    }
+
+    // Data transfer to the second activity
+    private void setObjectInView(Object object) {
+
+        Intent intent = new Intent(mContext, ObjectDetailsActivity.class);
+        intent.putExtra("EXTRA_OBJECT_NAME", object.getName());
+        intent.putExtra("EXTRA_CURRENT_SALES", object.getCurrentSales());
+        intent.putExtra("EXTRA_TOTAL_CURRENT_SALES", object.getTotalCurrentSales());
+        mContext.startActivity(intent);
     }
 
     @Override

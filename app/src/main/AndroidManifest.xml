@@ -14,10 +14,11 @@
         <activity android:name=".ObjectsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ObjectDetailsActivity"
+            android:theme="@style/AppTheme.NoTitle">
+        </activity>
     </application>
-
 </manifest>

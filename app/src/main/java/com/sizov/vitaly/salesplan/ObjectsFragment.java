@@ -29,6 +29,8 @@ import java.util.List;
 
 public class ObjectsFragment extends Fragment {
 
+    private ArrayList<Object> mObjects;
+
     private static final String TAG = "ObjectsFragment";
 
     private RecyclerView mRecyclerView;
@@ -69,7 +71,6 @@ public class ObjectsFragment extends Fragment {
         private final static String TAG = "FetchData";
 
         private String data = "";
-        private ArrayList<Object> mObjects;
 
         @Override
         protected List<Object> doInBackground(Void... voids) {
