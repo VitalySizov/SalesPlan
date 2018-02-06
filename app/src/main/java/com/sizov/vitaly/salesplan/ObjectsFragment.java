@@ -12,6 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,7 +80,7 @@ public class ObjectsFragment extends Fragment {
         protected List<Object> doInBackground(Void... voids) {
 
             try {
-                URL url = new URL("https://api.myjson.com/bins/zf4u7");
+                URL url = new URL("https://api.myjson.com/bins/nonl5");
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 InputStream inputStream = httpURLConnection.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -87,31 +91,30 @@ public class ObjectsFragment extends Fragment {
                     data = data + line;
                 }
 
+
                 mObjects = new ArrayList<>();
+
+                // Parsing and saving JSON arrays
                 JSONArray jsonArray = new JSONArray(data);
-                for (int i = 0; i < jsonArray.length(); i++) {
+                Gson gson = new Gson();
 
-                    JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                    Object object = new Object();
-                    object.setId(jsonObject.getInt("id"));
-                    object.setName((String) jsonObject.get("Name"));
-                    object.setAddress((String) jsonObject.get("Address"));
-                    object.setSalesPlan(jsonObject.getInt("Sales Plan"));
+                for (int i=0; i < jsonArray.length(); i++) {
 
-                    JSONArray salesArr = (JSONArray) jsonObject.get("Current Sales");
-                    double[] arr = new double[salesArr.length()];
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    Object object = gson.fromJson(jsonObject.toString(), Object.class);
+                    mObjects.add(object);
+                }
+
+                // Total amount of sale
+                for(int i=0; i < mObjects.size(); i++) {
 
                     double sum = 0;
+                    double[] array = mObjects.get(i).getCurrentSales();
 
-                    for(int j = 0; j < salesArr.length(); j++) {
-                        double element = salesArr.getDouble(j);
-                        arr[j] =+ element;
-                        sum = sum + element;
-                        object.setCurrentSales(arr);
-                        object.setTotalCurrentSales(sum);
+                    for (int j=0; j< array.length; j++) {
+                        sum = sum + array[j];
+                        mObjects.get(i).setTotalCurrentSales(sum);
                     }
-
-                    mObjects.add(object);
                 }
 
             } catch (MalformedURLException e) {
