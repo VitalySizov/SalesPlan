@@ -1,5 +1,8 @@
 package com.sizov.vitaly.salesplan;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,7 +13,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -39,18 +46,31 @@ public class ObjectsFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
-
+    private Button mButtonRetry;
+    private TextView mTextView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        FetchData process = new FetchData();
-        process.execute();
+        FetchData();
     }
 
     public static ObjectsFragment newInstance() {
         return new ObjectsFragment();
+    }
+
+    // Checking Internet connection
+    public boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
+    }
+
+    private void FetchData() {
+        if (isOnline()) {
+            FetchData process = new FetchData();
+            process.execute();
+        }
     }
 
     @Nullable
@@ -62,7 +82,32 @@ public class ObjectsFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
 
         mProgressBar = (ProgressBar)v.findViewById(R.id.objects_fragment_progress_bar);
-        mProgressBar.setVisibility(View.VISIBLE);
+
+        mButtonRetry = (Button) v.findViewById(R.id.button_retry);
+        mTextView = (TextView)v.findViewById(R.id.no_connection_text_view);
+
+        // Hide or show elements in layout
+        if (isOnline()) {
+            mProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mButtonRetry.setVisibility(View.VISIBLE);
+            mTextView.setVisibility(View.VISIBLE);
+        }
+
+        mButtonRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (isOnline()) {
+                    mButtonRetry.setVisibility(View.GONE);
+                    mTextView.setVisibility(View.GONE);
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    FetchData();
+                } else {
+                    Toast.makeText(getContext(), "No connection", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(linearLayoutManager);

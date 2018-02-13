@@ -6,6 +6,26 @@
                 android:layout_height="match_parent"
                 tools:context="com.sizov.vitaly.salesplan.ObjectsActivity">
 
+        <TextView
+            android:id="@+id/no_connection_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_connected"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="invisible"/>
+
+        <Button
+            android:id="@+id/button_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/retry"
+            android:layout_below="@+id/no_connection_text_view"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="18dp"
+            android:padding="5dp"
+            android:visibility="invisible"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
@@ -17,5 +37,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:visibility="invisible"/>
 </RelativeLayout>
