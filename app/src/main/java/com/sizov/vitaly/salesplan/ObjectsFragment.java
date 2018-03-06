@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -54,6 +55,7 @@ public class ObjectsFragment extends Fragment {
     private ObjectDbHelper objectDbHelper;
 
     private static final String TAG = "ObjectsFragment";
+    private static final String KEY_OBJECTS = "objects";
 
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
@@ -63,7 +65,34 @@ public class ObjectsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
         FetchData();
+
+        setRetainInstance(true);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart");
+
+
+        if (mObjects != null) {
+
+            setupAdapter();
+
+        } else {
+            Log.i(TAG, "No items in ArrayList<Object>");
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.i(TAG, "onSaveInstanceState");
+
+        // Save Objects
+        outState.putParcelableArrayList(KEY_OBJECTS, mObjects);
     }
 
     // Viewing table items in log
@@ -121,6 +150,11 @@ public class ObjectsFragment extends Fragment {
         ObjectAdapter objectAdapter = new ObjectAdapter(mObjects, getContext());
         mRecyclerView.setAdapter(objectAdapter);
         objectAdapter.notifyDataSetChanged();
+
+        // Hide elements
+         mProgressBar.setVisibility(View.INVISIBLE);
+         mButtonRetry.setVisibility(View.INVISIBLE);
+         mTextView.setVisibility(View.INVISIBLE);
     }
 
     @Nullable
@@ -210,13 +244,15 @@ public class ObjectsFragment extends Fragment {
                                             }
 
                                             // Writing data from a database
-                                            Object object = new Object();
-                                            object.setId(cursor.getInt(idIndex));
-                                            object.setName(cursor.getString(nameIndex));
-                                            object.setAddress(cursor.getString(addressIndex));
-                                            object.setSalesPlan(cursor.getInt(salesPlanIndex));
-                                            object.setCurrentSales(result);
-                                            object.setTotalCurrentSales(cursor.getDouble(totalCurrentSalesIndex));
+                                            Object object = new Object(
+                                                    cursor.getInt(idIndex),
+                                                    cursor.getString(nameIndex),
+                                                    cursor.getString(addressIndex),
+                                                    cursor.getInt(salesPlanIndex),
+                                                    result,
+                                                    cursor.getDouble(totalCurrentSalesIndex)
+                                            );
+
                                             mObjects.add(object);
 
                                         } while (cursor.moveToNext());
@@ -225,6 +261,8 @@ public class ObjectsFragment extends Fragment {
                                     cursor.close();
 
                                     if (mObjects != null) {
+
+                                        setupAdapter();
 
                                         // View ArrayList<Object>
                                         for (int i = 0; mObjects.size() > i; i++ ) {
@@ -240,8 +278,6 @@ public class ObjectsFragment extends Fragment {
 
                                         Log.i(TAG, "No items in ArrayList<Object>");
                                     }
-
-                                    setupAdapter();
                                 }
                             });
 
@@ -320,7 +356,7 @@ public class ObjectsFragment extends Fragment {
 
             setupAdapter();
 
-            mProgressBar.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.INVISIBLE);
 
             objectDbHelper = new ObjectDbHelper(getContext());
             SQLiteDatabase database = objectDbHelper.getWritableDatabase();

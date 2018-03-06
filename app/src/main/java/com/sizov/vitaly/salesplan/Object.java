@@ -1,7 +1,10 @@
 package com.sizov.vitaly.salesplan;
 
 
-public class Object {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Object implements Parcelable{
 
     private int mId;
     private String mName;
@@ -9,6 +12,36 @@ public class Object {
     private int mSalesPlan;
     private double[] mCurrentSales;
     private double mTotalCurrentSales;
+
+    public Object(int id, String name, String address, int salesPlan, double[] currentSales, double totalCurrentSales) {
+        mId = id;
+        mName = name;
+        mAddress = address;
+        mSalesPlan = salesPlan;
+        mCurrentSales = currentSales;
+        mTotalCurrentSales = totalCurrentSales;
+    }
+
+    protected Object(Parcel in) {
+        mId = in.readInt();
+        mName = in.readString();
+        mAddress = in.readString();
+        mSalesPlan = in.readInt();
+        mCurrentSales = in.createDoubleArray();
+        mTotalCurrentSales = in.readDouble();
+    }
+
+    public static final Creator<Object> CREATOR = new Creator<Object>() {
+        @Override
+        public Object createFromParcel(Parcel in) {
+            return new Object(in);
+        }
+
+        @Override
+        public Object[] newArray(int size) {
+            return new Object[size];
+        }
+    };
 
 
     public int getId() {
@@ -57,5 +90,20 @@ public class Object {
 
     public void setTotalCurrentSales(double totalCurrentSales) {
         mTotalCurrentSales = totalCurrentSales;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(mId);
+        parcel.writeString(mName);
+        parcel.writeString(mAddress);
+        parcel.writeInt(mSalesPlan);
+        parcel.writeDoubleArray(mCurrentSales);
+        parcel.writeDouble(mTotalCurrentSales);
     }
 }
