@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -40,9 +41,11 @@ public class ObjectAdapter extends RecyclerView.Adapter<ObjectAdapter.ViewHolder
         holder.mName.setText(object.getName());
         holder.mAddress.setText(object.getAddress());
         holder.mTotalCurrentSales.setText("Total current sales: " + String.format(Locale.getDefault(),
-                "%(.2f", object.getTotalCurrentSales()) + "$");
+                "%(.2f", object.getTotalCurrentSales()) + "\u0024");
         holder.mSalesPlan.setText("Sales plan: " + String.format(Locale.getDefault(),"%d",
-                object.getSalesPlan()) + "$");
+                object.getSalesPlan()) + "\u0024");
+        holder.mPercentProgressBar.setProgress(object.getPercentProgress());
+        holder.mPercentProgressTextView.setText(String.valueOf(object.getPercentProgress() + "\u0025"));
 
         // Transition to ObjectDetailsActivity
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -77,6 +80,8 @@ public class ObjectAdapter extends RecyclerView.Adapter<ObjectAdapter.ViewHolder
         public TextView mAddress;
         public TextView mTotalCurrentSales;
         public TextView mSalesPlan;
+        public ProgressBar mPercentProgressBar;
+        public TextView mPercentProgressTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -85,6 +90,8 @@ public class ObjectAdapter extends RecyclerView.Adapter<ObjectAdapter.ViewHolder
             mAddress = (TextView) itemView.findViewById(R.id.address_text_view);
             mTotalCurrentSales = (TextView) itemView.findViewById(R.id.total_current_sales_text_view);
             mSalesPlan = (TextView) itemView.findViewById(R.id.sales_plan_text_view);
+            mPercentProgressBar = (ProgressBar)itemView.findViewById(R.id.percent_progress_bar);
+            mPercentProgressTextView = (TextView)itemView.findViewById(R.id.percent_progress_text_view);
         }
     }
 }

@@ -18,6 +18,7 @@ public class ObjectDbHelper extends SQLiteOpenHelper {
     public static final String KEY_SALESPLAN = "salesplan";
     public static final String KEY_CURRENTSALES = "currentsales";
     public static final String KEY_TOTALCURRENTSALES = "totalcurrentsales";
+    public static final String KEY_PERCENTPROGRESS = "percentprogress";
 
 
     public ObjectDbHelper(Context context) {
@@ -33,7 +34,8 @@ public class ObjectDbHelper extends SQLiteOpenHelper {
                 + KEY_ADDRESS + " TEXT,"
                 + KEY_SALESPLAN + " TEXT,"
                 + KEY_CURRENTSALES + " TEXT,"
-                + KEY_TOTALCURRENTSALES + " TEXT"
+                + KEY_TOTALCURRENTSALES + " TEXT,"
+                + KEY_PERCENTPROGRESS + " TEXT"
                 + ")");
     }
 

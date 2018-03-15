@@ -12,14 +12,16 @@ public class Object implements Parcelable{
     private int mSalesPlan;
     private double[] mCurrentSales;
     private double mTotalCurrentSales;
+    private int mPercentProgress;
 
-    public Object(int id, String name, String address, int salesPlan, double[] currentSales, double totalCurrentSales) {
+    public Object(int id, String name, String address, int salesPlan, double[] currentSales, double totalCurrentSales, int percentProgress) {
         mId = id;
         mName = name;
         mAddress = address;
         mSalesPlan = salesPlan;
         mCurrentSales = currentSales;
         mTotalCurrentSales = totalCurrentSales;
+        mPercentProgress = percentProgress;
     }
 
     protected Object(Parcel in) {
@@ -29,6 +31,7 @@ public class Object implements Parcelable{
         mSalesPlan = in.readInt();
         mCurrentSales = in.createDoubleArray();
         mTotalCurrentSales = in.readDouble();
+        mPercentProgress = in.readInt();
     }
 
     public static final Creator<Object> CREATOR = new Creator<Object>() {
@@ -90,6 +93,14 @@ public class Object implements Parcelable{
 
     public void setTotalCurrentSales(double totalCurrentSales) {
         mTotalCurrentSales = totalCurrentSales;
+    }
+
+    public int getPercentProgress() {
+        return mPercentProgress;
+    }
+
+    public void setPercentProgress(int percentProgress) {
+        mPercentProgress = percentProgress;
     }
 
     @Override

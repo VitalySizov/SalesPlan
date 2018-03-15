@@ -113,13 +113,17 @@ public class ObjectsFragment extends Fragment {
             int salesPlanIndex = cursor.getColumnIndex(objectDbHelper.KEY_SALESPLAN);
             int currentSalesIndex = cursor.getColumnIndex(objectDbHelper.KEY_CURRENTSALES);
             int totalCurrentSalesIndex = cursor.getColumnIndex(objectDbHelper.KEY_TOTALCURRENTSALES);
+            int percentProgress = cursor.getColumnIndex(objectDbHelper.KEY_PERCENTPROGRESS);
+
             do {
                 Log.d(TAG,"ID = " + cursor.getInt(idIndex)
                         + " | NAME = " + cursor.getString(nameIndex)
                         + " | ADDRESS = " + cursor.getString(addressIndex)
                         + " | SALES PLAN = " + cursor.getString(salesPlanIndex)
                         + " | CURRENT SALES = " + cursor.getString(currentSalesIndex)
-                        + " | TOTAL SALES = " + cursor.getString(totalCurrentSalesIndex));
+                        + " | TOTAL SALES = " + cursor.getString(totalCurrentSalesIndex)
+                        + " | PERCENT PROGRESS = " + cursor.getInt(percentProgress)
+                    );
             } while (cursor.moveToNext());
         } else
             Log.d(TAG, "0 rows");
@@ -215,13 +219,16 @@ public class ObjectsFragment extends Fragment {
                                         int salesPlanIndex = cursor.getColumnIndex(objectDbHelper.KEY_SALESPLAN);
                                         int currentSalesIndex = cursor.getColumnIndex(objectDbHelper.KEY_CURRENTSALES);
                                         int totalCurrentSalesIndex = cursor.getColumnIndex(objectDbHelper.KEY_TOTALCURRENTSALES);
+                                        int percentProgress = cursor.getColumnIndex(objectDbHelper.KEY_PERCENTPROGRESS);
 
                                         Log.d(TAG,"ID = " + cursor.getInt(idIndex)
                                                 + " | NAME = " + cursor.getString(nameIndex)
                                                 + " | ADDRESS = " + cursor.getString(addressIndex)
                                                 + " | SALES PLAN = " + cursor.getString(salesPlanIndex)
                                                 + " | CURRENT SALES = " + cursor.getString(currentSalesIndex)
-                                                + " | TOTAL SALES = " + cursor.getString(totalCurrentSalesIndex));
+                                                + " | TOTAL SALES = " + cursor.getString(totalCurrentSalesIndex)
+                                                + " | PERCENT PROGRESS = " + cursor.getInt(percentProgress)
+                                        );
 
 
                                         mObjects = new ArrayList<>();
@@ -250,7 +257,8 @@ public class ObjectsFragment extends Fragment {
                                                     cursor.getString(addressIndex),
                                                     cursor.getInt(salesPlanIndex),
                                                     result,
-                                                    cursor.getDouble(totalCurrentSalesIndex)
+                                                    cursor.getDouble(totalCurrentSalesIndex),
+                                                    cursor.getInt(percentProgress)
                                             );
 
                                             mObjects.add(object);
@@ -331,6 +339,8 @@ public class ObjectsFragment extends Fragment {
                 // Total amount of sale
                 for(int i=0; i < mObjects.size(); i++) {
 
+                    int percentProgress = 0;
+
                     double sum = 0;
                     double[] array = mObjects.get(i).getCurrentSales();
 
@@ -338,7 +348,14 @@ public class ObjectsFragment extends Fragment {
                         sum = sum + array[j];
                         mObjects.get(i).setTotalCurrentSales(sum);
                     }
+
+                    // Calculation of the percentage of progress
+                    percentProgress = (int) ((mObjects.get(i).getTotalCurrentSales() * 100 ) / mObjects.get(i).getSalesPlan());
+                    mObjects.get(i).setPercentProgress(percentProgress);
                 }
+
+
+
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -373,6 +390,7 @@ public class ObjectsFragment extends Fragment {
                 contentValues.put(objectDbHelper.KEY_SALESPLAN, mObjects.get(i).getSalesPlan());
                 contentValues.put(objectDbHelper.KEY_CURRENTSALES, Arrays.toString(mObjects.get(i).getCurrentSales()));
                 contentValues.put(objectDbHelper.KEY_TOTALCURRENTSALES, mObjects.get(i).getTotalCurrentSales());
+                contentValues.put(objectDbHelper.KEY_PERCENTPROGRESS, mObjects.get(i).getPercentProgress());
 
                 database.insert(objectDbHelper.TABLE_OBJECTS, null, contentValues);
             }
